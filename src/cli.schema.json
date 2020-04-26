@@ -1,0 +1,30 @@
+{
+    "type": "object",
+    "properties": {
+        "command": {
+            "type": "string"
+        },
+        "options": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "flags": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "flags"
+                ]
+            }
+        },
+        "action": {}
+    },
+    "required": [
+        "command",
+        "action"
+    ]
+}
