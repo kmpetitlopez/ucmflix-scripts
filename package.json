@@ -1,13 +1,10 @@
 {
   "name": "ucmflix-scripts",
   "version": "1.0.0",
-  "description": "ucmflix scripts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "ucmflix": "node src/cli.js"
   },
   "author": "Kira Petit",
-  "license": "ISC",
   "dependencies": {
     "ajv": "^6.5.2",
     "chalk": "^2.4.1",
