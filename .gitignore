@@ -1,3 +1,5 @@
+.DS_Store
+
 # IDE config files
 .project
 .sublime-grunt.cache

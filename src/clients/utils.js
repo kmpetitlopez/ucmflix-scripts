@@ -1,8 +1,21 @@
 'use strict';
 
-const {spawn} = require('child_process'),
+const util = require('util'),
+    {spawn} = require('child_process'),
+    exec = util.promisify(require('child_process').exec),
     path = require('path'),
     fs = require('fs');
+
+async function execS2(cmd, args = []) {
+    const command = cmd + ' ' + args.join(' ');
+
+    console.log('Executing: ', command)
+
+    const { stdout, stderr } = await exec(command);
+
+    console.log(stderr);
+    console.log(stdout);
+}
 
 function execS(cmd, args) {
     return new Promise((resolve, reject) => {
@@ -51,7 +64,8 @@ module.exports = {
     getCleanName,
     execS,
     getDir,
-    existFile
+    existFile,
+    execS2
 }
 
 

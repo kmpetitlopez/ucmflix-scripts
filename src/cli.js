@@ -34,8 +34,6 @@
         };
 
     try {
-        console.log('\n', chalk.yellowBright(pkg.description), '\n');
-
         commander.version(pkg.version, '-v, --version');
 
         getDirectories(path.resolve(__dirname, scriptsDir)).forEach((dir) => {

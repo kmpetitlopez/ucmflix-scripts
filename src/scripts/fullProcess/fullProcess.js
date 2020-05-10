@@ -122,7 +122,7 @@ async function fullProcess(input, opts) {
         console.log('\n', chalk.yellowBright(`Generating manifest`));
         await generateManifest(outputFolder, opts);
 
-        console.log('\n', chalk.yellowBright(`Pocess completed [configurations=${JSON.stringify(finalConfiguration)}]`));
+        console.log('\n', `Pocess completed [configurations=${JSON.stringify(finalConfiguration)}]`);
         
     } catch (err) {
         console.log(err)

@@ -30,7 +30,7 @@ module.exports = class MP4BoxClient {
                 return;
             }
 
-            await utils.execS(CMD, args);
+            await utils.execS2(CMD, args);
 
             return outputName;
         } catch (e) {
