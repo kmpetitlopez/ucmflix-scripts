@@ -18,6 +18,10 @@ module.exports = {
         {
             flags: '-k, --keyframe <keyframe>',
             description: 'keyframe interval'
+        },
+        {
+            flags: '-s, --stats',
+            description: 'print some stats about the process'
         }
     ],
     action: require('./encodeVideo.js')

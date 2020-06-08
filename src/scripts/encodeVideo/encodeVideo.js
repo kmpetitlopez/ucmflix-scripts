@@ -7,22 +7,8 @@ const _ = require('underscore'),
         keyframe: 90
     },
     ffmpegClient = require('../../clients/ffmpeg/client.js'),
-    path = require('path'),
-    fs = require('fs'),
     chalk = require('chalk'),
-    moment = require('moment');
-
-function generateOutputFolder(input, output) {
-    const baseFolder = path.dirname(input),
-        newFolderName = moment.utc().format('YYYYMMDDHHmm') + '_video',
-        outputPath = output || path.join(baseFolder, newFolderName);
-
-    if (!fs.existsSync(outputPath)) {
-        fs.mkdirSync(outputPath)
-    }
-
-    return outputPath;
-}
+    utils = require('../utils');
 
 async function encodeVideo(input, opts) {
     try {
@@ -34,31 +20,37 @@ async function encodeVideo(input, opts) {
             bitrates = opts.bitrate.split(','),
             hasSameLength = resolutions.length === bitrates.length,
             configurations = [],
-            outputFolder = generateOutputFolder(input, opts.output);
+            outputFolder = utils.generateOutputFolder(input, opts.output, '_video'),
+            isResolution = resolutions.length >= bitrates.length,
+            loop = isResolution ? resolutions : bitrates;
 
-        if (!hasSameLength && bitrates.length !== 1) {
+        if (!hasSameLength && 
+            ((isResolution && bitrates.length !== 1) ||
+            (!isResolution && resolutions.length !== 1))) {
             throw new Error(`Difference between resolution and bitrates`);
         }
 
-        defaultConfiguration.keyframe = opts.keyframe || defaultConfiguration.keyframe;
+        defaultConfiguration.gopSize = opts.keyframe || defaultConfiguration.keyframe;
 
-        for (let i = 0; i < resolutions.length; i++) {
+        for (let i = 0; i < loop.length; i++) {
             const config = _.clone(defaultConfiguration);
 
-            config.size = resolutions[i];
-            config.bitrate = hasSameLength ? bitrates[i] : bitrates[0];
+            config.size = isResolution ? resolutions[i] : resolutions[0];
+            config.bitrate = (!isResolution || hasSameLength) ? bitrates[i] : bitrates[0];
 
             const client = new ffmpegClient(input, outputFolder);
 
-            console.log('\n', chalk.blue(`Encoding video [configuration=${JSON.stringify(config)}] [outputFolder=${outputFolder}]`));
-            config.encodedVideo = await client.encodeVideo(config);
-            console.log('\n', chalk.green(`Video encoded [configuration=${JSON.stringify(config)}] [outputFolder=${outputFolder}]`));
+            console.log('\n', chalk.blue(`Encoding video [configuration=${JSON.stringify(config, null, '\t')}] [outputFolder=${outputFolder}]`));
+            config.encodedVideo = await client.encodeVideo(config, opts.stats);
+            console.log('\n', chalk.blue(`Video encoded`));
             
             config.input = input;
             config.output = outputFolder;
             configurations.push(config);
         }
-        console.log(chalk.yellowBright(`Encoding finished [configurations=${JSON.stringify(configurations)}]`))
+
+        await utils.storeProcessConfiguration(configurations, outputFolder);
+        console.log(chalk.cyan(`Encoding finished [configurations=${JSON.stringify(configurations, null, '\t')}]`))
     } catch (err) {
         console.error(err && err.toString());
     }

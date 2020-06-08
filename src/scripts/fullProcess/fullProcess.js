@@ -80,7 +80,7 @@ async function encodeVideo(input, outputFolder, opts) {
         throw new Error(`Difference between resolution and bitrates`);
     }
 
-    defaultVideoconfiguration.keyframe = opts.keyframe || defaultVideoconfiguration.keyframe;
+    defaultVideoconfiguration.gopSize = opts.keyframe || defaultVideoconfiguration.keyframe;
 
     for (let i = 0; i < resolutions.length; i++) {
         const config = _.clone(defaultVideoconfiguration);

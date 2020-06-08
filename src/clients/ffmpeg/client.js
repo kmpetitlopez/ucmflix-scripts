@@ -17,14 +17,14 @@ module.exports = class FfmpegClient {
         this.outputFile = outputFile;
     }
 
-    async encodeVideo(encodingParameters) {
+    async encodeVideo(encodingParameters, printStats) {
         if (!encodingParameters) {
             throw new Error('cannot encode video without parameters');
         }
 
         try {
             const outputName = path.join(this.outputFile,
-                    ffmpegUtils.generateOutputName(this.input, encodingParameters, 'video')),
+                ffmpegUtils.generateOutputName(this.input, encodingParameters, 'video')),
                 args = this._getCmdArguments(encodingParameters, outputName, videoConfiguration.configuration);
             
             if (utils.existFile(outputName)) {
@@ -32,16 +32,16 @@ module.exports = class FfmpegClient {
                 return;
             }
 
-            await utils.execS2(CMD, args);
+            const stats = await utils.execS2(CMD, args, printStats);
 
-            return outputName;
+            return {outputName, stats};
         } catch (e) {
             console.log(`Error encoding video with [args= ${JSON.stringify(encodingParameters)}]`);
             console.log(`Error = ${e.toString()}`);
         }
     }
 
-    async encodeAudio(encodingParameters) {
+    async encodeAudio(encodingParameters, printStats) {
         if (!encodingParameters) {
             throw new Error('cannot encode audio without parameters');
         }
@@ -56,9 +56,9 @@ module.exports = class FfmpegClient {
                 return;
             }
 
-            await utils.execS2(CMD, args);
+            const stats = await utils.execS2(CMD, args, printStats);
 
-            return outputName;
+            return {outputName, stats};
         } catch (e) {
             console.log(`Error encoding audio with [args= ${JSON.stringify(encodingParameters)}]`);
             console.log(`Error = ${e.toString()}`);

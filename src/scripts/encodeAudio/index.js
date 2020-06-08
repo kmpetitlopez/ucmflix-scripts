@@ -10,6 +10,10 @@ module.exports = {
         {
             flags: '-B, --audioBitrate <audioBitrate>',
             description: 'audio bitrate'
+        },
+        {
+            flags: '-s, --stats',
+            description: 'print some stats about the process'
         }
     ],
     action: require('./encodeAudio.js')
